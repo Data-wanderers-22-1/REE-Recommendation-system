@@ -3,6 +3,7 @@ package com.example.vms.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.vms.common.QueryPagePara;
 import com.example.vms.common.Result;
@@ -24,11 +25,12 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user")
+@CrossOrigin
 public class UserController {
-    /*@GetMapping
+    @GetMapping
     public String hello() {
         return "Hello vms";
-    }*/
+    }
     @Autowired
     private UserService userService;
 
@@ -54,41 +56,61 @@ public class UserController {
     }
     //删
     @GetMapping("/delete")
-    public boolean delete(Integer id){
-        return userService.removeById(id);
+    public Result delete(@RequestParam Integer id){
+        return userService.removeById(id)?Result.success():Result.fail();
+    }
+    //更新
+    @GetMapping("/update")
+    public Result update(@RequestBody User user){
+        return userService.updateById(user)?Result.success():Result.fail();
+    }
+
+    @PostMapping("/login")
+    public Result login(@RequestBody User user){
+        List list=userService.lambdaQuery()
+                .eq(User::getNo,user.getNo())
+                .eq(User::getPassword,user.getPassword()).list();
+        return list.size()>0?Result.success(list.get(0)):Result.fail();
     }
     //查（模糊，匹配）
     @PostMapping("/listP")
-    public List<User> listP(@RequestBody User user){
+    public Result listP(@RequestBody User user){
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         //lambdaQueryWrapper.eq(User::getName, user.getName()); 完全匹配
-        lambdaQueryWrapper.like(User::getName, user.getName());
-        return userService.list(lambdaQueryWrapper);}
+        if(StringUtils.isNotBlank(user.getName())){
+            lambdaQueryWrapper.like(User::getName, user.getName());
+        }
 
-    @PostMapping("/listPage")
-    public List<User> listPage(@RequestBody QueryPagePara params) {
-        HashMap elements = params.getParams();
-        String name = (String) elements.get("name");
-        /*System.out.println("name=="+elements.get("name"));
-        System.out.println("no=="+elements.get("no"));*/
+        return Result.success(userService.list(lambdaQueryWrapper));}
 
-        Page<User> page = new Page<>(params.getPageNum(),params.getPageSize());
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(User::getName, name);
-
-        IPage iPage = userService.page(page, lambdaQueryWrapper);
-        System.out.println("total=="+iPage.getTotal());
-        return iPage.getRecords();
-    }
+//    @PostMapping("/listPage")
+//    public List<User> listPage(@RequestBody QueryPagePara params) {
+//        HashMap elements = params.getParam();
+//        String name = (String) elements.get("name");
+//        /*System.out.println("name=="+elements.get("name"));
+//        System.out.println("no=="+elements.get("no"));*/
+//
+//        Page<User> page = new Page<>(params.getPageNum(),params.getPageSize());
+//        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+//        if(StringUtils.isNotBlank(name)){
+//            lambdaQueryWrapper.like(User::getName, name);
+//        }
+//
+//        IPage iPage = userService.page(page, lambdaQueryWrapper);
+//        System.out.println("total=="+iPage.getTotal());
+//        return iPage.getRecords();
+//    }
 
     @PostMapping("/listPages")
-    public Result listPages(@RequestBody QueryPagePara params) {
-        HashMap elements = params.getParams();
+    public Result listPages(@RequestBody QueryPagePara q) {
+        HashMap elements = q.getParam();
         String name = (String) elements.get("name");
 
-        Page<User> page = new Page<>(params.getPageNum(),params.getPageSize());
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(User::getName, name);
+        Page<User> page = new Page<>(q.getPageNum(),q.getPageSize());
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper();
+        if(StringUtils.isNotBlank(name) && !"null".equals(name)){
+            lambdaQueryWrapper.like(User::getName, name);
+        }
 
         IPage iPage = userService.page(page, lambdaQueryWrapper);
         System.out.println("total=="+iPage.getTotal());

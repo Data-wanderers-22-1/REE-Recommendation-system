@@ -14,10 +14,10 @@ public class Result {
 
     private static Result result(int code, String message, long total,Object data) {
         Result result = new Result();
-        result.code = code;
-        result.message = message;
-        result.total = total;
-        result.data = data;
+        result.setData(data);
+        result.setMessage(message);
+        result.setCode(code);
+        result.setTotal(total);
         return result;
     }
 
@@ -34,6 +34,4 @@ public class Result {
     public static Result success(Object data,long total){
         return result(200,"成功",total,data);
     }
-
-
 }

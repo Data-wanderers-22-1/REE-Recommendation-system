@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <title>考研院校推荐系统</title>
     <style>
         body, html {
@@ -93,12 +94,6 @@
     const quickBtn = document.getElementById('quick-btn');
     const advancedBtn = document.getElementById('advanced-btn');
 
-    const provinces = [
-        "北京市", "天津市", "河北省", "山西省", "内蒙古自治区", "辽宁省", "吉林省", "黑龙江省", "上海市", "江苏省",
-        "浙江省", "安徽省", "福建省", "江西省", "山东省", "河南省", "湖北省", "湖南省", "广东省", "广西壮族自治区",
-        "海南省", "重庆市", "四川省", "贵州省", "云南省", "西藏自治区", "陕西省", "甘肃省", "青海省", "宁夏回族自治区", "新疆维吾尔自治区"
-    ];
-
     function setActiveButton(button) {
         [homeBtn, quickBtn, advancedBtn].forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
@@ -107,79 +102,108 @@
     function showHome() {
         setActiveButton(homeBtn);
         content.innerHTML = `
-                <h1 style="text-align: center;">欢迎来到考研院校推荐系统</h1>
-                <p style="text-align: center;">当前时间: ${new Date().toLocaleString('zh-CN')}</p>
-            `;
+            <h1 style="text-align: center;">欢迎来到考研院校推荐系统</h1>
+            <p style="text-align: center;">当前时间: ${new Date().toLocaleString('zh-CN')}</p>
+        `;
     }
 
     function showQuickSearch() {
         setActiveButton(quickBtn);
-        const provinceOptions = provinces.map(province => `<option value="${province}">${province}</option>`).join('');
         content.innerHTML = `
-                <h2>快速查询</h2>
-                <div class="search-box">
-                    <select id="region">
-                        <option value="">选择地区</option>
-                        ${provinceOptions}
-                    </select>
-                    <input type="text" id="major" placeholder="输入专业">
-                    <button onclick="submitQuickSearch()">提交查询</button>
-                </div>
-            `;
+            <h2>快速查询</h2>
+            <div class="search-box">
+                <input type="text" id="region" placeholder="输入地区">
+                <input type="text" id="name" placeholder="输入学院名">
+                <input type="text" id="level" placeholder="输入本科/专科">
+                <input type="text" id="location" placeholder="输入所在地">
+                <input type="text" id="scoreLine" placeholder="输入分数线">
+                <button onclick="submitQuickSearch()">提交查询</button>
+            </div>
+        `;
+    }
+
+    function submitQuickSearch() {
+        // 确保正确获取每个输入框的值
+        const region = document.getElementById('region').value;
+        const name = document.getElementById('name').value;
+        const level = document.getElementById('level').value;
+        const location = document.getElementById('location').value;
+        const scoreLine = document.getElementById('scoreLine').value;
+        console.log("Captured Values:", { region, name, level, location, scoreLine });
+        axios.post('http://localhost:8090/university/listPages', {
+            param: {
+                region: region + '',
+                name: name + '',
+                level: level + '',
+                location: location + '',
+                scoreLine: scoreLine + ''
+            }
+        })
+            .then(response => {
+                const data = response.data;
+                console.log(region);
+                if (data.code == 200) {
+                    const searchParams = new URLSearchParams();
+                    searchParams.append('region', region);
+                    searchParams.append('name', name);
+                    searchParams.append('level', level);
+                    searchParams.append('location', location);
+                    searchParams.append('scoreLine', scoreLine);
+                    console.log(searchParams.toString());
+                    console.log("searchParams");
+
+                    // console.log(searchParams.toString());
+                    // alert("1"+searchParams.toString());
+                    window.location.href = 'result.html?' + searchParams.toString();
+                } else {
+                    alert('查询失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('查询出错，请稍后再试');
+            });
     }
 
     function showAdvancedSearch() {
         setActiveButton(advancedBtn);
-        const provinceOptions = provinces.map(province => `<option value="${province}">${province}</option>`).join('');
         content.innerHTML = `
-                <h2>高级查询</h2>
-                <div class="search-box">
-                    <select id="adv-region">
-                        <option value="">选择地区</option>
-                        ${provinceOptions}
-                    </select>
-                    <input type="text" id="adv-major" placeholder="输入专业">
-                    <select id="adv-degree">
-                        <option value="">选择学位类型</option>
-                        <option value="学术型硕士">学术型硕士</option>
-                        <option value="专业型硕士">专业型硕士</option>
-                    </select>
-                    <input type="number" id="adv-score" placeholder="输入预估分数">
-                    <select id="adv-ranking">
-                        <option value="">选择院校排名范围</option>
-                        <option value="1-50">1-50</option>
-                        <option value="51-100">51-100</option>
-                        <option value="101-150">101-150</option>
-                        <option value="151-200">151-200</option>
-                        <option value="200+">200+</option>
-                    </select>
-                    <button onclick="submitAdvancedSearch()">提交高级查询</button>
-                </div>
-            `;
-    }
-
-    function submitQuickSearch() {
-        const region = document.getElementById('region').value;
-        const major = document.getElementById('major').value;
-        alert(`快速查询条件：地区 - ${region || '未选择'}, 专业 - ${major || '未填写'}`);
-        // 这里可以添加实际的查询逻辑
+            <h2>高级查询</h2>
+            <div class="search-box">
+                <input type="text" id="adv-region" placeholder="输入地区">
+                <input type="text" id="adv-major" placeholder="输入专业">
+                <button onclick="submitAdvancedSearch()">提交高级查询</button>
+            </div>
+        `;
     }
 
     function submitAdvancedSearch() {
         const region = document.getElementById('adv-region').value;
         const major = document.getElementById('adv-major').value;
-        const degree = document.getElementById('adv-degree').value;
-        const score = document.getElementById('adv-score').value;
-        const ranking = document.getElementById('adv-ranking').value;
-        alert(`高级查询条件：\n地区 - ${region || '未选择'}\n专业 - ${major || '未填写'}\n学位类型 - ${degree || '未选择'}\n预估分数 - ${score || '未填写'}\n院校排名范围 - ${ranking || '未选择'}`);
-        // 这里可以添加实际的查询逻辑
+
+        axios.post('http://localhost:8090/university/listPages', {
+            pageNum: 1,
+            pageSize: 10,
+            param: { region, major }
+        })
+            .then(response => {
+                const data = response.data;
+                if (data.success) {
+                    alert(`高级查询成功，共查询到 ${data.total} 条结果`);
+                } else {
+                    alert('高级查询失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('查询出错，请稍后再试');
+            });
     }
 
     homeBtn.addEventListener('click', showHome);
     quickBtn.addEventListener('click', showQuickSearch);
     advancedBtn.addEventListener('click', showAdvancedSearch);
 
-    // 初始显示首页
     showHome();
 </script>
 </body>

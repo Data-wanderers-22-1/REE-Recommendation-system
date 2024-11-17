@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推荐院校结果</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100%;
+            background: linear-gradient(to bottom right, #e0f7fa, #fce4ec);
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .result-list {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .school-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        .school-item:last-child {
+            border-bottom: none;
+        }
+        .school-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+        .school-info {
+            margin-top: 10px;
+            color: #666;
+        }
+        .back-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>推荐院校结果</h1>
+    <div class="result-list" id="schoolList">
+        <!-- 推荐院校列表将通过 JavaScript 动态添加 -->
+    </div>
+    <a href="main.html" class="back-button">返回查询</a>
+</div>
+
+<script>
+    function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        console.log(params.get('region'));
+        return {
+            region: params.get('region') || '',
+            name: params.get('name') || '',
+            level: params.get('level') || '',
+            location: params.get('location') || '',
+            scoreLine: params.get('scoreLine') || '',
+        };
+    }
+
+    function displaySchools() {
+        const schoolList = document.getElementById('schoolList');
+        const { region, name,level, location, scoreLine } = getQueryParams();
+        console.log(getQueryParams());
+        // 设置加载提示
+        schoolList.innerHTML = '<p>加载中，请稍候...</p>';
+        // 使用 Axios 发送请求
+        axios.post('http://localhost:8090/university/listPages', {
+            param:{
+                region: region || '', // 将查询参数传递到后端
+                name: name || '', // 将查询参数传递到后端
+                level:level || '' ,// 将查询参数传递到后端
+                location:location || '' ,// 将查询参数传递到后端
+                scoreLine:scoreLine || '' ,// 将查询参数传递到后端
+            }
+        })
+            .then(response => {
+                console.log(region);
+                console.log(location);
+                console.log(scoreLine);
+                console.log(name);
+                console.log(level);
+                console.log(response.data);
+                const data = response.data;
+                if (data.code==200 && data.data) {
+                    schoolList.innerHTML = data.data.map(school => `
+                        <div class="school-item">
+                            <div class="school-name">${school.name}</div>
+                            <div class="school-info">
+                                <p>地区: ${school.region || '未知'}</p>
+                                <p>城市: ${school.location || '未知'}</p>
+                                <p>等级: ${school.level || '未知'}</p>
+                                <p>分数线: ${school.score || '未知'}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    schoolList.innerHTML = '<p>没有找到相关院校。</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                schoolList.innerHTML = '<p>加载失败，请稍后再试。</p>';
+            });
+    }
+
+    displaySchools();
+</script>
+</body>
+</html>
