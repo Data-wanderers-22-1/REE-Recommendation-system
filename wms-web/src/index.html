@@ -90,15 +90,14 @@
         methods: {
             login() {
                 if (this.username && this.password) {
-                    // 假设这里会调用后台接口进行登录
                     alert('登录成功！用户名：' + this.username);
                     this.errorMessage = '';
+                    window.location.href = 'main.html'; // 跳转到 main 页面
                 } else {
                     this.errorMessage = '请输入账号和密码';
                 }
             },
             register() {
-                // 这里可以跳转到注册页面，或者触发注册逻辑
                 alert('跳转到注册页面');
             }
         }

@@ -49,6 +49,4 @@ public class User implements Serializable {
     @ApiModelProperty(value = "是否有效，有效为Y")
     @TableField("isValid")
     private String isvalid;
-
-
 }

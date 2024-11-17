@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.vms.mapper.UniversityMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.vms.entity.University">
+        <id column="school_code" property="schoolCode" />
+        <result column="name" property="name" />
+        <result column="level" property="level" />
+        <result column="region" property="region" />
+        <result column="location" property="location" />
+        <result column="score_line" property="scoreLine" />
+        <result column="website_link" property="websiteLink" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        school_code, name, level, region, location, score_line, website_link
+    </sql>
+
+</mapper>
