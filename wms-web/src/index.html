@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <title>用户登录 - 考研院校推荐</title>
+    <style>
+        /* 页面整体样式 */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #a8edea, #fed6e3); /* 渐变背景 */
+        }
+        /* 标题样式 */
+        .title {
+            font-size: 48px;
+            color: #333;
+            margin-bottom: 60px;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        /* 登录框样式 */
+        #app {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 300px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .register-button {
+            background-color: #007BFF;
+        }
+        .register-button:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 独立的大标题 -->
+<div class="title">考研院校推荐</div>
+
+<!-- 用户登录框 -->
+<div id="app">
+    <h2>用户登录</h2>
+    <input type="text" v-model="username" placeholder="账号">
+    <input type="password" v-model="password" placeholder="密码">
+    <button @click="login">登录</button>
+    <button class="register-button" @click="register">注册</button>
+    <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p >
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            username: '',
+            password: '',
+            errorMessage: ''
+        },
+        methods: {
+            login() {
+                if (this.username && this.password) {
+                    // 假设这里会调用后台接口进行登录
+                    alert('登录成功！用户名：' + this.username);
+                    this.errorMessage = '';
+                } else {
+                    this.errorMessage = '请输入账号和密码';
+                }
+            },
+            register() {
+                // 这里可以跳转到注册页面，或者触发注册逻辑
+                alert('跳转到注册页面');
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
