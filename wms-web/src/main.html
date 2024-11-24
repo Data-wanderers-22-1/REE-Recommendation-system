@@ -130,7 +130,18 @@
         const location = document.getElementById('location').value;
         const scoreLine = document.getElementById('scoreLine').value;
         console.log("Captured Values:", { region, name, level, location, scoreLine });
-        axios.post('http://localhost:8090/university/listPages', {
+
+        const searchParams = new URLSearchParams();
+        searchParams.append('region', region);
+        searchParams.append('name', name);
+        searchParams.append('level', level);
+        searchParams.append('location', location);
+        searchParams.append('scoreLine', scoreLine);
+        console.log(searchParams.toString());
+        console.log("searchParams");
+        //alert("1"+searchParams.toString());
+        window.location.href = 'result.html?' + searchParams.toString();
+        /*axios.post('http://localhost:8090/university/listPages', {
             param: {
                 region: region + '',
                 name: name + '',
@@ -153,8 +164,8 @@
                     console.log("searchParams");
 
                     // console.log(searchParams.toString());
-                    // alert("1"+searchParams.toString());
-                    window.location.href = 'result.html?' + searchParams.toString();
+                    //alert("1"+searchParams.toString());
+                    //window.location.href = 'result.html?' + searchParams.toString();
                 } else {
                     alert('查询失败');
                 }
@@ -162,26 +173,32 @@
             .catch(error => {
                 console.error('Error:', error);
                 alert('查询出错，请稍后再试');
-            });
+            });*/
     }
 
     function showAdvancedSearch() {
         setActiveButton(advancedBtn);
         content.innerHTML = `
-            <h2>高级查询</h2>
+            <h2>自动推荐查询</h2>
             <div class="search-box">
-                <input type="text" id="adv-region" placeholder="输入地区">
-                <input type="text" id="adv-major" placeholder="输入专业">
-                <button onclick="submitAdvancedSearch()">提交高级查询</button>
+                <input type="text" id="adv-location" placeholder="输入您所在城市">
+                <input type="text" id="adv-major" placeholder="输入您当前专业">
+                <button onclick="submitAdvancedSearch()">提交查询</button>
             </div>
         `;
     }
 
     function submitAdvancedSearch() {
-        const region = document.getElementById('adv-region').value;
+        const location = document.getElementById('adv-location').value;
         const major = document.getElementById('adv-major').value;
 
-        axios.post('http://localhost:8090/university/listPages', {
+        const searchParams = new URLSearchParams();
+        searchParams.append('region', major);
+        searchParams.append('location', location);
+        console.log(searchParams.toString());
+        console.log("searchParams");
+        window.location.href = 'result.html?' + searchParams.toString();
+        /*axios.post('http://localhost:8090/university/listPages', {
             pageNum: 1,
             pageSize: 10,
             param: { region, major }
@@ -197,7 +214,7 @@
             .catch(error => {
                 console.error('Error:', error);
                 alert('查询出错，请稍后再试');
-            });
+            });*/
     }
 
     homeBtn.addEventListener('click', showHome);

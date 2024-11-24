@@ -64,7 +64,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>推荐院校结果</h1>
+    <h1>推荐院校结果（最多显示前20条）</h1>
     <div class="result-list" id="schoolList">
         <!-- 推荐院校列表将通过 JavaScript 动态添加 -->
     </div>
@@ -87,7 +87,7 @@
     function displaySchools() {
         const schoolList = document.getElementById('schoolList');
         const { region, name,level, location, scoreLine } = getQueryParams();
-        console.log(getQueryParams());
+        //console.log(getQueryParams());
         // 设置加载提示
         schoolList.innerHTML = '<p>加载中，请稍候...</p>';
         // 使用 Axios 发送请求
@@ -101,22 +101,23 @@
             }
         })
             .then(response => {
-                console.log(region);
-                console.log(location);
-                console.log(scoreLine);
-                console.log(name);
-                console.log(level);
-                console.log(response.data);
+                //console.log(region);
+                //console.log(location);
+                //console.log(scoreLine);
+                //console.log(name);
+                //console.log(level);
+                //console.log(response.data);
                 const data = response.data;
                 if (data.code==200 && data.data) {
                     schoolList.innerHTML = data.data.map(school => `
                         <div class="school-item">
                             <div class="school-name">${school.name}</div>
                             <div class="school-info">
-                                <p>地区: ${school.region || '未知'}</p>
+                                <p>学校代码: ${school.schoolCode || '未知'}</p>
+                                <p>专业: ${school.region || '未知'}</p>
                                 <p>城市: ${school.location || '未知'}</p>
                                 <p>等级: ${school.level || '未知'}</p>
-                                <p>分数线: ${school.score || '未知'}</p>
+                                <p>分数线: ${school.scoreLine || '未知'}</p>
                             </div>
                         </div>
                     `).join('');

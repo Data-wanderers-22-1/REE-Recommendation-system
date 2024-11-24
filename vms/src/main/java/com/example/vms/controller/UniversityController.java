@@ -51,6 +51,7 @@ public class UniversityController
         @PostMapping("/listPages")
         public Result listPages(@RequestBody QueryPagePara q) {
             HashMap elements = q.getParam();
+            System.out.println(q);
             String name = (String) elements.get("name");
             String level= (String) elements.get("level");
             String region= (String) elements.get("region");

@@ -41,8 +41,11 @@ public class UserController {
 
     //增
     @PostMapping("/save")
-    public boolean save(@RequestBody User user){
-        return userService.save(user);
+    public Result save(@RequestBody User user){
+        List list=userService.lambdaQuery()
+                .eq(User::getNo,user.getNo()).list();
+        if (list.size()>0) return Result.fail();
+        return userService.save(user)?Result.success():Result.fail();
     }
     //改
     @PostMapping("/mod")

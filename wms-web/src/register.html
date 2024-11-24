@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <title>用户登录 - 考研院校推荐</title>
+    <title>用户注册 - 考研院校推荐</title>
     <style>
         /* 页面整体样式 */
         body {
@@ -72,10 +72,12 @@
 
 <!-- 用户登录框 -->
 <div id="app">
-    <h2>用户登录</h2>
-    <input type="text" v-model="no" placeholder="账号">
+    <h2>用户注册</h2>
+    <input type="text" v-model="email" placeholder="邮箱">
+    <input type="text" v-model="username" placeholder="称谓">
+    <input type="text" v-model="no" placeholder="账号(唯一)">
     <input type="password" v-model="password" placeholder="密码">
-    <button @click="login">登录</button>
+    <input type="password" v-model="enpassword" placeholder="确认密码">
     <button class="register-button" @click="register">注册</button>
     <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p >
 </div>
@@ -84,25 +86,34 @@
     new Vue({
         el: '#app',
         data: {
-            no: '',
+            no:'',
+            email:'',
+            username: '',
             password: '',
+            enpassword: '',
             errorMessage: ''
         },
         methods: {
-            login() {
-                if (this.no && this.password) {
-                    axios.post('http://localhost:8090/user/login', {
-                            no: this.no || '', // 将查询参数传递到后端
-                            password: this.password || '', // 将查询参数传递到后端
+            register() {
+                if (this.password != this.enpassword) {alert("两次密码输入不一致！")}
+                else if (this.email && this.no && this.username && this.password && this.enpassword) {
+                    axios.post('http://localhost:8090/user/save', {
+                        no: this.no || '', // 将查询参数传递到后端
+                        name:this.username || '',
+                        password: this.password || '', // 将查询参数传递到后端
+                        sex: "1" || '',
+                        email: this.email || '',
+                        roleId: 2 || '',
+                        isvalid: 'Y' || '',
                     })
                         .then(response => {
                             const data = response.data;
-                            if (data.code==200 && data.data) {
-                                alert('登录成功！用户名：' + this.no);
+                            if (data.code==200) {
+                                alert('注册成功！用户名：' + this.no);
                                 this.errorMessage = '';
-                                window.location.href = 'main.html'; // 跳转到 main 页面
+                                window.location.href = 'index.html'; // 跳转到 main 页面
                             }else {
-                                alert("登录失败，用户名或密码错误。");
+                                alert("注册失败,账号已存在。");
                             }
                         })
                         .catch(error => {
@@ -110,14 +121,11 @@
                             alert("加载失败，请稍后再试。");
                         });
                 } else {
-                    this.errorMessage = '请输入账号和密码';
+                    this.errorMessage = '请输入全部信息';
                     //alert('跳转到注册页面');
                 }
             },
-            register() {
-                alert('跳转到注册页面');
-                window.location.href = 'register.html';
-            }
+
         }
     });
 </script>
