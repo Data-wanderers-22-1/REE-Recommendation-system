@@ -35,5 +35,6 @@ public class University implements Serializable {
 
     private String websiteLink;
 
+    private Integer number;
 
 }

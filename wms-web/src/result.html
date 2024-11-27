@@ -113,11 +113,11 @@
                         <div class="school-item">
                             <div class="school-name">${school.name}</div>
                             <div class="school-info">
-                                <p>学校代码: ${school.schoolCode || '未知'}</p>
+                                <p>等级: ${school.level || '未知'}</p>
+                                <p>专业代码: ${school.schoolCode || '未知'}</p>
                                 <p>专业: ${school.region || '未知'}</p>
                                 <p>城市: ${school.location || '未知'}</p>
-                                <p>等级: ${school.level || '未知'}</p>
-                                <p>分数线: ${school.scoreLine || '未知'}</p>
+                                <p>拟招生人数: ${school.scoreLine || '未知'}</p>
                             </div>
                         </div>
                     `).join('');
@@ -130,7 +130,6 @@
                 schoolList.innerHTML = '<p>加载失败，请稍后再试。</p>';
             });
     }
-
     displaySchools();
 </script>
 </body>
